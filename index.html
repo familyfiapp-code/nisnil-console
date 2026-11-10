@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nisnil Master Console</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#f7f4ee">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+:root{--paper:#f7f4ee;--paper-2:#efe9de;--card:#fff;--ink:#13231f;--ink-2:#2d3c38;--muted:#5d6a66;--line:#e3dccf;--green:#0e5a4f;--green-2:#0a463e;--green-3:#e3efe9;--saffron:#b9761a;--saffron-2:#fbefd8;--red:#a3261a;--red-2:#fdeceb;--blue:#1f5f8b;--blue-2:#e6f0f7;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.15}
+a{color:var(--green)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:0;z-index:5;background:rgba(247,244,238,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;min-height:62px;flex-wrap:wrap;padding-block:8px}
+.logo{display:flex;align-items:center;gap:10px}.logo i{width:36px;height:36px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font:600 19px Fraunces,Georgia,serif;font-style:normal}
+.logo b{font:600 19px Fraunces,Georgia,serif;display:block}.logo small{display:block;font:600 10.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);min-width:0;flex-wrap:wrap;justify-content:flex-end}
+.who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:600 13.5px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--green)}.btn.pri{background:var(--green);border-color:var(--green);color:#fff}.btn.pri:hover{background:var(--green-2)}
+.btn.sm{min-height:30px;padding:0 11px;font-size:12.5px}.btn.warn{color:var(--red)}.btn.armed{background:var(--red);border-color:var(--red);color:#fff}
+.btn:focus-visible,.tabs button:focus-visible,.app:focus-visible,.inp:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+main{padding-block:20px 70px;display:flex;flex-direction:column;gap:16px}
+.banner{border-radius:14px;padding:10px 14px;font-size:13.5px;background:var(--saffron-2);color:#6b4307;border:1px solid #f0d9ad}
+.banner.err{background:var(--red-2);color:var(--red);border-color:#f3c9c4}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,165px),1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi small{display:block;font:600 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font:600 27px/1.15 Fraunces,Georgia,serif;margin-top:6px}.kpi span{font-size:12.5px;color:var(--muted)}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px}
+.app{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:6px;min-width:0}
+.app:hover{border-color:var(--muted)}.app[aria-pressed=true]{border-color:var(--green);box-shadow:0 0 0 2px var(--green-3)}
+.app .t{display:flex;align-items:center;gap:8px;justify-content:space-between}.app .t b{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app .n{font-size:12.5px;color:var(--muted)}.app .m{display:flex;gap:12px;font-size:12.5px;color:var(--ink-2);flex-wrap:wrap}
+.chip{display:inline-block;font:600 11.5px Inter,sans-serif;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.c-up,.c-active{background:var(--green-3);color:var(--green-2)}.c-down,.c-expired,.c-revoked{background:var(--red-2);color:var(--red)}
+.c-nolink,.c-other,.c-none{background:var(--paper-2);color:var(--muted)}.c-trial,.c-due{background:var(--saffron-2);color:#6b4307}.c-info{background:var(--blue-2);color:var(--blue)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:999px;padding:7px 15px;font:600 13.5px Inter,sans-serif;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;min-width:0}
+.panel>header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.panel>header h2{font-size:20px;margin-right:auto}
+.sub{font-size:12.5px;color:var(--muted)}td .sub{display:block}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px;align-items:start}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font:600 11px Inter,sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.inp{min-height:38px;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;font:14px Inter,sans-serif;background:#fff;color:var(--ink);min-width:0;width:100%}
+select.inp{width:auto}
+.form{display:flex;flex-direction:column;gap:10px}.form label{display:flex;flex-direction:column;gap:4px;font:600 12.5px Inter,sans-serif;color:var(--ink-2)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
+.empty{padding:22px 8px;text-align:center;color:var(--muted);font-size:14px}
+.bars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;align-items:end;height:150px;padding-top:6px}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;min-width:0}
+.bar i{display:block;width:100%;max-width:34px;background:var(--green);border-radius:6px 6px 2px 2px;min-height:2px}
+.bar i.fut{background:var(--paper-2)}.bar span{font-size:11px;color:var(--muted)}.bar em{font:600 10.5px Inter,sans-serif;color:var(--ink-2);font-style:normal;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.signin{max-width:440px;margin:9vh auto 0;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.signin p{color:var(--muted);margin:0}
+#toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none;max-width:92vw;text-align:center}
+#toast.on{opacity:1}
+.busy{position:fixed;top:0;left:0;height:3px;background:var(--green);z-index:30;width:0;transition:width .4s}
+.busy.on{width:70%}
+.muted{color:var(--muted)}.right{margin-left:auto}
+.applist td .inp{min-height:32px;font-size:13px}
+td:first-child{min-width:150px}
+@media (max-width:640px){.bar em{display:none}.kpi b{font-size:23px}.panel{padding:14px}.who span{max-width:150px}th,td{padding:8px 6px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="busy" id="busy"></div>
+<header class="top"><div class="wrap">
+  <div class="logo"><i>N</i><div><b>Master console</b><small>Nisnil AI-Finance Solutions</small></div></div>
+  <div class="who" id="who"></div>
+</div></header>
+<main class="wrap" id="main" aria-live="polite"></main>
+<div id="toast" role="status"></div>
+<script>
+(function(){
+'use strict';
+var C = window.NN_CONFIG || {};
+var DEMO = /[?&]demo\b/.test(location.search);
+var OWNER = (C.OWNER_EMAIL || 'familyfi.app@gmail.com').toLowerCase();
+var SS = 'nn-console-auth';
+var $ = function(s, r){ return (r || document).querySelector(s); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var inrF = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 });
+function inr(v){ return '₹' + inrF.format(Math.round(Number(v) || 0)); }
+function ist(ms){ return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms)); }
+function nice(ymd){ if (!ymd) return '—'; var d = new Date(String(ymd).slice(0,10) + 'T12:00:00+05:30'); return isNaN(d) ? esc(ymd) : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var toastT;
+function toast(m){ var t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function(){ t.classList.remove('on'); }, 3200); }
+var busyN = 0;
+function busy(on){ busyN = Math.max(0, busyN + (on ? 1 : -1)); $('#busy').classList.toggle('on', busyN > 0); }
+
+/* ---------------- state ---------------- */
+var S = { data: null, sel: 'all', tab: 'home', q: '', f: 'all', period: 'fy', armed: null, edit: null, custom: {} };
+
+/* ---------------- Google sign-in ---------------- */
+var auth = null, tc = null, pending = [];
+try { var a0 = JSON.parse(sessionStorage.getItem(SS) || 'null'); if (a0 && a0.exp > Date.now() + 60000) auth = a0; } catch (e) {}
+function tokenOk(){ return !!(auth && auth.tok && auth.exp > Date.now() + 60000); }
+function client(){
+  if (tc) return tc;
+  if (!(window.google && google.accounts && google.accounts.oauth2)) throw new Error('Google sign-in did not load. Check your internet and reload.');
+  if (!C.CLIENT_ID) throw new Error('Setup: CLIENT_ID is empty in config.js.');
+  tc = google.accounts.oauth2.initTokenClient({ client_id: C.CLIENT_ID, scope: 'openid email',
+    callback: function(r){
+      if (!r || r.error || !r.access_token) return fail(new Error((r && (r.error_description || r.error)) || 'Sign-in was cancelled.'));
+      auth = { tok: r.access_token, exp: Date.now() + Number(r.expires_in || 3600) * 1000 };
+      try { sessionStorage.setItem(SS, JSON.stringify(auth)); } catch (e) {}
+      var w = pending; pending = []; w.forEach(function(x){ x.res(auth.tok); });
+    },
+    error_callback: function(e){ fail(new Error(e && e.type === 'popup_closed' ? 'The Google window was closed before sign-in finished.' : 'Sign-in failed.')); } });
+  return tc;
+}
+function fail(err){ var w = pending; pending = []; w.forEach(function(x){ x.rej(err); }); }
+function signIn(){ return new Promise(function(res, rej){ pending.push({ res: res, rej: rej }); try { client().requestAccessToken({ prompt: '', login_hint: OWNER }); } catch (e) { fail(e); } }); }
+function token(){ return tokenOk() ? Promise.resolve(auth.tok) : Promise.reject(Object.assign(new Error('Your sign-in timed out.'), { code: 'AUTH' })); }
+function signOut(){ try { if (auth) google.accounts.oauth2.revoke(auth.tok, function(){}); } catch (e) {} try { sessionStorage.removeItem(SS); } catch (e) {} auth = null; S.data = null; showSignIn(); }
+
+/* ---------------- server calls ---------------- */
+function call(url, fn, args){
+  if (!url) return Promise.reject(new Error('Setup: HUB_URL is empty in config.js.'));
+  busy(true);
+  return token().then(function(t){
+    return fetch(url, { method: 'POST', body: JSON.stringify({ fn: fn, token: t, args: args || [] }), redirect: 'follow' });
+  }).then(function(r){ return r.json(); }).then(function(o){
+    busy(false);
+    if (o && o.ok) return o.data;
+    var e = new Error((o && o.error) || 'The server did not answer. Try again.'); e.code = o && o.code;
+    if (e.code === 'AUTH' && auth) auth.exp = 0;
+    throw e;
+  }, function(e){ busy(false); if (e && e.code === 'AUTH') throw e; throw new Error(e && e.message === 'Failed to fetch' ? 'Could not reach the server. Check your internet.' : (e && e.message) || String(e)); });
+}
+function hub(fn){ var a = [].slice.call(arguments, 1); return DEMO ? demoCall(fn, a) : call(C.HUB_URL, fn, a); }
+function act(fn){
+  var a = [].slice.call(arguments, 1);
+  return hub.apply(null, [fn].concat(a)).catch(function(e){
+    if (e && e.code === 'AUTH') { reconnect(); } else toast('Failed: ' + ((e && e.message) || e));
+    throw e;
+  });
+}
+function reconnect(){
+  var m = $('#main'); if ($('#recon')) return;
+  var b = document.createElement('div'); b.id = 'recon'; b.className = 'banner';
+  b.innerHTML = 'Your Google sign-in timed out (it lasts about an hour). <button class="btn sm" type="button">Continue</button>';
+  b.querySelector('button').onclick = function(){ signIn().then(function(){ b.remove(); load(false); }, function(e){ toast(e.message); }); };
+  m.insertBefore(b, m.firstChild);
+}
+
+/* ---------------- loading ---------------- */
+function load(fresh){
+  return act('hubOverview', { fresh: !!fresh }).then(function(d){
+    S.data = d;
+    if (S.sel !== 'all' && !d.apps.some(function(x){ return x.id === S.sel; })) S.sel = 'all';
+    render(); loadCustom();
+    if (fresh) toast('Updated');
+  }, function(e){ if (!S.data) showError(e); });
+}
+function loadCustom(){
+  (S.data.apps || []).filter(function(x){ return x.kind === 'custom' && x.api; }).forEach(function(x){
+    (DEMO ? demoCustom(x) : call(x.api, 'hubSummary')).then(function(r){ S.custom[x.id] = { ok: true, customers: (r && r.customers) || [] }; render(); },
+      function(e){ S.custom[x.id] = { ok: false, error: e.message }; render(); });
+  });
+}
+
+/* ---------------- numbers ---------------- */
+function fyStart(){ var t = ist(Date.now()); var y = +t.slice(0,4), m = +t.slice(5,7); return (m >= 4 ? y : y - 1) + '-04-01'; }
+function inSel(id){ return S.sel === 'all' || S.sel === id; }
+function pays(){ return ((S.data && S.data.payments) || []).filter(function(p){ return inSel(p.app); }); }
+function net(p){ return (Number(p.amount) || 0) - (Number(p.refunded) || 0); }
+function sum(list){ return list.reduce(function(s, p){ return s + net(p); }, 0); }
+function custList(){
+  var out = [];
+  var d = S.data || {};
+  var ffApp = (d.apps || []).filter(function(x){ return x.kind === 'familyfi'; })[0];
+  if (ffApp && d.familyfi && inSel(ffApp.id)) d.familyfi.customers.forEach(function(c){ out.push(Object.assign({ app: ffApp.id, appName: ffApp.name, managed: true }, c)); });
+  (d.apps || []).forEach(function(x){
+    var cu = S.custom[x.id]; if (x.kind !== 'custom' || !cu || !cu.ok || !inSel(x.id)) return;
+    cu.customers.forEach(function(c){ out.push({ app: x.id, appName: x.name, managed: false, email: String(c.email || ''), name: c.name || '', planName: c.plan || c.planName || '', plan: c.plan || '',
+      status: c.status || 'active', expires: c.expires || '', daysLeft: c.expires ? Math.round((new Date(c.expires + 'T12:00:00+05:30') - new Date(ist(Date.now()) + 'T12:00:00+05:30')) / 864e5) : null }); });
+  });
+  return out;
+}
+function isPaid(c){ return c.status === 'active' && c.plan !== 'trial'; }
+function isDue(c){ return c.status === 'active' && c.daysLeft != null && c.daysLeft >= 0 && c.daysLeft <= 7; }
+function appStats(x){
+  var d = S.data, p = (d.payments || []).filter(function(q){ return q.app === x.id; });
+  var month = ist(Date.now()).slice(0,7), fy = fyStart();
+  var cs = x.kind === 'familyfi' ? ((d.familyfi && d.familyfi.customers) || []) : x.kind === 'custom' && S.custom[x.id] && S.custom[x.id].ok ? S.custom[x.id].customers : null;
+  return { month: sum(p.filter(function(q){ return ist(q.at).slice(0,7) === month; })), fy: sum(p.filter(function(q){ return ist(q.at) >= fy; })),
+    paid: cs ? cs.filter(function(c){ return (c.status || 'active') === 'active' && c.plan !== 'trial'; }).length : null };
+}
+
+/* ---------------- screens ---------------- */
+function showSignIn(msg){
+  $('#who').innerHTML = DEMO ? '<span class="chip c-info">Demo · sample data</span>' : '';
+  $('#main').innerHTML = '<div class="signin"><div class="logo" style="justify-content:center"><i>N</i></div><h1 style="font-size:30px">Master console</h1>' +
+    '<p>All your apps in one place: website, FamilyFi, FamilyFi Lite and the next ones. Owner only.</p>' +
+    (msg ? '<div class="banner err">' + esc(msg) + '</div>' : '') +
+    '<button class="btn pri" id="go" type="button">Continue with Google</button><p class="sub">Sign in with ' + esc(OWNER) + '. The console keeps no passwords or keys.</p></div>';
+  $('#go').onclick = function(){ signIn().then(function(){ $('#main').innerHTML = '<div class="empty">Loading your apps…</div>'; load(false); }, function(e){ showSignIn(e.message); }); };
+}
+function showError(e){
+  if (e && /Owner only/.test(e.message)) { try { sessionStorage.removeItem(SS); } catch (x) {} auth = null; showSignIn('That Google account is not the owner. Sign in with ' + OWNER + '.'); return; }
+  if (e && e.code === 'AUTH') { showSignIn(e.message); return; }
+  $('#main').innerHTML = '<div class="panel"><h2>Could not load</h2><p class="muted">' + esc(e && e.message) + '</p><button class="btn" id="retry" type="button">Try again</button></div>';
+  $('#retry').onclick = function(){ load(true); };
+}
+
+function render(){
+  var d = S.data; if (!d) return;
+  $('#who').innerHTML = (DEMO ? '<span class="chip c-info">Demo · sample data</span>' : '<span>' + esc(OWNER) + '</span>') +
+    '<button class="btn sm" id="refresh" type="button">Refresh</button>' + (DEMO ? '' : '<button class="btn sm" id="out" type="button">Sign out</button>');
+  var errs = Object.keys(d.errors || {}).map(function(k){ return '<div class="banner err"><b>' + esc({ status: 'Link check', payments: 'Razorpay', familyfi: 'FamilyFi customers' }[k] || k) + ':</b> ' + esc(d.errors[k]) + '</div>'; }).join('');
+  var tabs = [['home','Overview'],['cust','Customers'],['pay','Payments'],['act','Actions'],['apps','Apps']];
+  $('#main').innerHTML = errs + kpis() + appCards() +
+    '<div class="tabs" role="tablist" aria-label="Sections">' + tabs.map(function(t){ return '<button role="tab" type="button" data-tab="' + t[0] + '" aria-selected="' + (S.tab === t[0]) + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+    ({ home: home, cust: customers, pay: payments, act: actions, apps: appsTab }[S.tab])();
+  wire();
+}
+function kpis(){
+  var cs = custList(), p = pays(), month = ist(Date.now()).slice(0,7), fy = fyStart();
+  var trial = cs.filter(function(c){ return c.status === 'trial'; }).length;
+  var due = cs.filter(isDue).length;
+  var mRev = sum(p.filter(function(q){ return ist(q.at).slice(0,7) === month; }));
+  var fyRev = sum(p.filter(function(q){ return ist(q.at) >= fy; }));
+  var apps = (S.data.apps || []).filter(function(x){ return inSel(x.id) && x.url; });
+  var up = apps.filter(function(x){ return (S.data.status[x.id] || {}).state === 'up'; }).length;
+  var fyLbl = 'FY ' + fy.slice(2,4) + '-' + String(+fy.slice(2,4) + 1).padStart(2, '0');
+  return '<section class="kpis" aria-label="Key numbers">' +
+    k('Paying customers', cs.filter(isPaid).length, trial + ' on free trial') +
+    k('Renewals in 7 days', due, due ? 'see Actions → reminders' : 'nothing due') +
+    k('Revenue this month', inr(mRev), MON[+month.slice(5,7) - 1] + ' ' + month.slice(0,4) + ', after refunds') +
+    k('Revenue ' + fyLbl, inr(fyRev), 'from 1 Apr ' + fy.slice(0,4)) +
+    k('Apps online', up + ' of ' + apps.length, apps.length && up < apps.length ? 'one needs a look' : 'all links answering') + '</section>';
+  function k(a, b, c){ return '<div class="kpi"><small>' + esc(a) + '</small><b>' + esc(b) + '</b><span>' + esc(c) + '</span></div>'; }
+}
+function stChip(x){
+  var s = (S.data.status || {})[x.id] || { state: x.url ? 'down' : 'nolink' };
+  if (x.kind === 'link' && !x.url) return '<span class="chip c-nolink">Link only</span>';
+  return s.state === 'up' ? '<span class="chip c-up">Online</span>' : s.state === 'nolink' ? '<span class="chip c-nolink">No link yet</span>' : '<span class="chip c-down">Down' + (s.code ? ' · ' + s.code : '') + '</span>';
+}
+function kindName(k){ return { site: 'Website', familyfi: 'FamilyFi server app', payments: 'Payments only', custom: 'App with its own server', link: 'Link only' }[k] || k; }
+function appCards(){
+  var apps = S.data.apps || [];
+  return '<section class="apps" aria-label="Your apps">' +
+    '<button class="app" type="button" data-app="all" aria-pressed="' + (S.sel === 'all') + '"><span class="t"><b>All apps</b><span class="chip c-info">' + apps.length + '</span></span><span class="n">Everything together</span>' +
+    '<span class="m"><span>FY ' + inr(sum((S.data.payments || []).filter(function(q){ return ist(q.at) >= fyStart(); }))) + '</span></span></button>' +
+    apps.map(function(x){ var st = appStats(x);
+      return '<button class="app" type="button" data-app="' + esc(x.id) + '" aria-pressed="' + (S.sel === x.id) + '"><span class="t"><b>' + esc(x.name) + '</b>' + stChip(x) + '</span>' +
+        '<span class="n">' + esc(x.note || kindName(x.kind)) + '</span><span class="m">' +
+        (x.kind === 'site' || x.kind === 'link' ? '<span>' + esc(kindName(x.kind)) + '</span>' : '<span>Month ' + inr(st.month) + '</span><span>FY ' + inr(st.fy) + '</span>' + (st.paid != null ? '<span>' + st.paid + ' paying</span>' : '')) +
+        '</span></button>'; }).join('') + '</section>';
+}
+function selName(){ if (S.sel === 'all') return 'All apps'; var x = S.data.apps.filter(function(a){ return a.id === S.sel; })[0]; return x ? x.name : 'All apps'; }
+
+function home(){
+  var fy = fyStart(), y = +fy.slice(0,4), p = pays(), nowM = ist(Date.now()).slice(0,7);
+  var months = []; for (var i = 0; i < 12; i++) { var m = (3 + i) % 12, yy = y + (3 + i >= 12 ? 1 : 0); months.push(yy + '-' + String(m + 1).padStart(2, '0')); }
+  var vals = months.map(function(mm){ return sum(p.filter(function(q){ return ist(q.at).slice(0,7) === mm; })); });
+  var max = Math.max.apply(null, vals.concat([1]));
+  var short = function(v){ return v >= 100000 ? '₹' + (v / 100000).toFixed(1) + 'L' : v >= 1000 ? '₹' + (v / 1000).toFixed(1) + 'k' : v ? '₹' + Math.round(v) : ''; };
+  var chart = '<div class="bars" role="img" aria-label="Revenue by month this financial year">' + months.map(function(mm, i){
+    var fut = mm > nowM; return '<div class="bar" title="' + esc(MON[+mm.slice(5,7) - 1] + ' ' + mm.slice(0,4) + ': ' + inr(vals[i])) + '"><em>' + (fut ? '' : short(vals[i])) + '</em><i class="' + (fut ? 'fut' : '') + '" style="height:' + (fut ? 2 : Math.max(2, Math.round(vals[i] / max * 110))) + 'px"></i><span>' + MON[+mm.slice(5,7) - 1] + '</span></div>'; }).join('') + '</div>';
+  var apps = (S.data.apps || []).filter(function(x){ return inSel(x.id); });
+  var rows = apps.map(function(x){ var st = appStats(x);
+    var links = (x.url ? [{ t: 'Open', u: x.url }] : []).concat(x.links || []);
+    var note = x.kind === 'payments' ? 'Customer list needs this app to have its own server.' : x.kind === 'custom' && S.custom[x.id] && !S.custom[x.id].ok ? 'Server: ' + S.custom[x.id].error : '';
+    return '<tr><td><b>' + esc(x.name) + '</b><span class="sub">' + esc(kindName(x.kind)) + (note ? ' · ' + esc(note) : '') + '</span></td><td>' + stChip(x) + '</td>' +
+      '<td class="num">' + (st.paid == null ? '—' : st.paid) + '</td><td class="num">' + inr(st.month) + '</td><td class="num">' + inr(st.fy) + '</td>' +
+      '<td><div class="acts">' + links.map(function(l){ return '<a class="btn sm" target="_blank" rel="noopener" href="' + esc(l.u) + '">' + esc(l.t) + '</a>'; }).join('') + '</div></td></tr>'; }).join('');
+  var other = S.sel === 'all' ? (S.data.payments || []).filter(function(q){ return q.app === 'other'; }) : [];
+  return '<div class="grid2"><section class="panel"><header><h2>Revenue · ' + esc(selName()) + '</h2><span class="sub">Apr–Mar, after refunds</span></header>' + chart + '</section>' +
+    '<section class="panel"><header><h2>Needs attention</h2></header>' + attention() + '</section></div>' +
+    '<section class="panel"><header><h2>Apps today</h2><span class="sub">Checked ' + esc(new Date(S.data.at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })) + '</span></header>' +
+    '<div class="scroll"><table><thead><tr><th>App</th><th>Status</th><th class="num">Paying</th><th class="num">This month</th><th class="num">This FY</th><th>Open</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    (other.length ? '<p class="sub" style="margin:10px 0 0">' + other.length + ' Razorpay payment(s) worth ' + inr(sum(other)) + ' did not match any app. Set the amounts or word for each app in <b>Apps</b>.</p>' : '') + '</section>';
+}
+function attention(){
+  var items = [], cs = custList();
+  (S.data.apps || []).filter(function(x){ return inSel(x.id) && x.url && (S.data.status[x.id] || {}).state === 'down'; }).forEach(function(x){ items.push(['c-down', x.name + ' is not answering' + ((S.data.status[x.id] || {}).code ? ' (error ' + S.data.status[x.id].code + ')' : '') + '. Open it to check.']); });
+  var due = cs.filter(isDue); if (due.length) items.push(['c-due', due.length + ' plan(s) end in the next 7 days. Send reminders from Actions.']);
+  var tr = cs.filter(function(c){ return c.status === 'trial' && c.daysLeft != null && c.daysLeft <= 3; }); if (tr.length) items.push(['c-trial', tr.length + ' free trial(s) end within 3 days. A friendly nudge helps them buy.']);
+  var ex = cs.filter(function(c){ return c.status === 'expired' && c.daysLeft != null && c.daysLeft >= -30; }); if (ex.length) items.push(['c-expired', ex.length + ' plan(s) ended in the last 30 days and were not renewed.']);
+  var oc = (S.data.payments || []).filter(function(p){ return inSel(p.app) && p.app === 'familyfi' && p.amount === 699 && ist(p.at) >= '2026-11-10'; });
+  if (oc.length) items.push(['c-down', oc.length + ' payment(s) of ₹699 (old offline price) after the offline edition closed. Refund or move to an online plan.']);
+  if (S.data.familyfi && S.data.familyfi.auto === false && inSel('familyfi')) items.push(['c-due', 'Automatic Razorpay check is off. Run setup in the FamilyFi Server project.']);
+  (S.data.apps || []).filter(function(x){ return inSel(x.id) && !x.url && x.kind !== 'link'; }).forEach(function(x){ items.push(['c-nolink', x.name + ' has no link yet. Add it in Apps so the console can check it.']); });
+  if (!items.length) return '<div class="empty">All clear. Nothing needs you right now.</div>';
+  return '<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">' + items.map(function(i){ return '<li style="display:flex;gap:8px;align-items:flex-start;font-size:14px"><span class="chip ' + i[0] + '" style="margin-top:2px">!</span><span>' + esc(i[1]) + '</span></li>'; }).join('') + '</ul>';
+}
+
+function customers(){
+  var all = custList(), q = S.q.toLowerCase();
+  var rows = all.filter(function(c){ var s = (c.email + ' ' + c.name + ' ' + c.planName).toLowerCase();
+    var ok = S.f === 'all' || (S.f === 'paid' ? isPaid(c) : S.f === 'due' ? isDue(c) : c.status === S.f); return ok && (!q || s.indexOf(q) >= 0); });
+  var plans = (S.data.familyfi && S.data.familyfi.pricing && S.data.familyfi.pricing.plans) || [];
+  var lite = (S.data.apps || []).filter(function(x){ return x.kind === 'payments' && inSel(x.id); });
+  var head = '<section class="panel"><header><h2>Customers · ' + esc(selName()) + '</h2>' +
+    '<input class="inp" id="q" style="max-width:240px" placeholder="Search name or email" value="' + esc(S.q) + '" aria-label="Search customers">' +
+    '<select class="inp" id="f" aria-label="Filter">' + [['all','All'],['paid','Paying'],['trial','Free trial'],['due','Ending in 7 days'],['expired','Ended'],['revoked','Stopped']].map(function(o){ return '<option value="' + o[0] + '"' + (S.f === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
+    '<button class="btn sm" id="csv" type="button">Download CSV</button></header>';
+  var note = lite.length ? '<p class="sub" style="margin:-2px 0 10px">' + lite.map(function(x){ return esc(x.name); }).join(', ') + ': no customer list yet (the app keeps the plan in each user\'s own Drive). Its payments are in Payments.</p>' : '';
+  if (!rows.length) return head + note + '<div class="empty">' + (all.length ? 'No customers match.' : 'No customers yet.') + '</div></section>';
+  return head + note + '<div class="scroll"><table><thead><tr><th>Customer</th><th>App</th><th>Plan</th><th>Ends</th><th>Actions</th></tr></thead><tbody>' +
+    rows.map(function(c){ var k = c.app + ':' + c.email;
+      var chip = isDue(c) ? 'c-due' : 'c-' + c.status;
+      var label = c.status === 'revoked' ? 'Stopped' : c.status === 'expired' ? 'Ended' : c.status === 'trial' ? 'Trial' : isDue(c) ? 'Ends soon' : 'Active';
+      var acts = c.managed ? '<select class="inp" style="min-height:30px;font-size:12.5px" data-ext="' + esc(c.email) + '" aria-label="Extend plan for ' + esc(c.email) + '"><option value="">Extend…</option>' + plans.map(function(p){ return '<option value="' + esc(p.id) + '">+ ' + esc(p.name) + '</option>'; }).join('') + '</select>' +
+        (c.status === 'revoked' ? '<button class="btn sm" type="button" data-res="' + esc(c.email) + '">Restore</button>' : '<button class="btn sm warn' + (S.armed === 'rev:' + c.email ? ' armed' : '') + '" type="button" data-rev="' + esc(c.email) + '">' + (S.armed === 'rev:' + c.email ? 'Confirm stop' : 'Stop') + '</button>') : '';
+      acts += '<a class="btn sm" href="' + esc(remindLink(c)) + '">Email</a>';
+      return '<tr><td><b>' + esc(c.name || c.email.split('@')[0]) + '</b><span class="sub">' + esc(c.email) + '</span></td><td>' + esc(c.appName) + '</td>' +
+        '<td><span class="chip ' + chip + '">' + label + '</span><span class="sub">' + esc(c.planName || c.plan) + '</span></td>' +
+        '<td>' + nice(c.expires) + '<span class="sub">' + (c.daysLeft == null ? '' : c.daysLeft >= 0 ? c.daysLeft + ' days left' : -c.daysLeft + ' days ago') + '</span></td>' +
+        '<td><div class="acts">' + acts + '</div></td></tr>'; }).join('') + '</tbody></table></div></section>';
+}
+function remindLink(c){
+  var app = (S.data.apps || []).filter(function(x){ return x.id === c.app; })[0] || {};
+  var name = c.name || 'there', buy = (S.data.familyfi && S.data.familyfi.pricing && S.data.familyfi.pricing.buyUrl) || app.url || '';
+  var subj, body;
+  if (c.status === 'trial') { subj = 'Your ' + c.appName + ' free trial'; body = 'Hi ' + name + ',\n\nYour ' + c.appName + ' free trial ends on ' + nice(c.expires) + '. To keep using it, choose a plan here:\n' + buy + '\n\nYour data stays in your own Google Drive.\n\nRegards,\nSunil Panchal\nNisnil AI-Finance Solutions'; }
+  else if (c.status === 'expired') { subj = 'Your ' + c.appName + ' plan has ended'; body = 'Hi ' + name + ',\n\nYour ' + c.appName + ' plan ended on ' + nice(c.expires) + '. Your data is safe in your Google Drive. Renew any time here:\n' + buy + '\n\nRegards,\nSunil Panchal\nNisnil AI-Finance Solutions'; }
+  else { subj = 'Your ' + c.appName + ' plan renews soon'; body = 'Hi ' + name + ',\n\nYour ' + c.appName + ' plan (' + (c.planName || c.plan) + ') ends on ' + nice(c.expires) + '. Renew here to keep using it without a break:\n' + buy + '\n\nRegards,\nSunil Panchal\nNisnil AI-Finance Solutions'; }
+  return 'mailto:' + encodeURIComponent(c.email) + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+}
+
+function periodList(){
+  var p = pays(), now = ist(Date.now()), m = now.slice(0,7);
+  var lm = (function(){ var y = +m.slice(0,4), mm = +m.slice(5,7) - 1; if (!mm) { y--; mm = 12; } return y + '-' + String(mm).padStart(2, '0'); })();
+  var d30 = ist(Date.now() - 30 * 864e5);
+  return p.filter(function(q){ var d = ist(q.at); return S.period === 'month' ? d.slice(0,7) === m : S.period === 'last' ? d.slice(0,7) === lm : S.period === '30' ? d >= d30 : S.period === 'fy' ? d >= fyStart() : true; })
+    .sort(function(a, b){ return b.at - a.at; });
+}
+function payments(){
+  var list = periodList(), names = {}; (S.data.apps || []).forEach(function(x){ names[x.id] = x.name; }); names.other = 'Not matched';
+  var by = {}; list.forEach(function(p){ by[p.app] = (by[p.app] || 0) + net(p); });
+  return '<section class="panel"><header><h2>Razorpay payments · ' + esc(selName()) + '</h2>' +
+    '<select class="inp" id="per" aria-label="Period">' + [['month','This month'],['last','Last month'],['30','Last 30 days'],['fy','This financial year'],['all','Everything loaded']].map(function(o){ return '<option value="' + o[0] + '"' + (S.period === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
+    '<button class="btn sm" id="pcsv" type="button">Download CSV</button><a class="btn sm" target="_blank" rel="noopener" href="https://dashboard.razorpay.com/app/payments">Razorpay</a></header>' +
+    '<div class="legend" style="margin-bottom:8px"><span><b style="color:var(--ink)">' + inr(sum(list)) + '</b> from ' + list.length + ' payment(s)</span>' + Object.keys(by).map(function(k){ return '<span>' + esc(names[k] || k) + ': ' + inr(by[k]) + '</span>'; }).join('') + '</div>' +
+    (list.length ? '<div class="scroll"><table><thead><tr><th>Date</th><th>Buyer</th><th>App</th><th>What</th><th class="num">Amount</th></tr></thead><tbody>' +
+      list.map(function(p){ return '<tr><td>' + nice(ist(p.at)) + '<span class="sub">' + esc(p.id) + '</span></td><td><b>' + esc(p.name || p.email.split('@')[0] || '—') + '</b><span class="sub">' + esc(p.email) + (p.phone ? ' · ' + esc(p.phone) : '') + '</span></td>' +
+        '<td>' + (p.app === 'other' ? '<span class="chip c-other">Not matched</span>' : esc(names[p.app] || p.app)) + '</td><td>' + esc(p.desc || p.method || '—') + (p.refunded ? '<span class="sub" style="color:var(--red)">Refunded ' + inr(p.refunded) + '</span>' : '') + '</td>' +
+        '<td class="num"><b>' + inr(p.amount) + '</b></td></tr>'; }).join('') + '</tbody></table></div>' : '<div class="empty">No payments in this period.</div>') + '</section>';
+}
+
+function actions(){
+  var ff = (S.data.apps || []).filter(function(x){ return x.kind === 'familyfi'; })[0];
+  var plans = (S.data.familyfi && S.data.familyfi.pricing && S.data.familyfi.pricing.plans) || [];
+  var due = custList().filter(function(c){ return isDue(c) || (c.status === 'trial' && c.daysLeft != null && c.daysLeft <= 3); });
+  var off = S.data.offline || [];
+  return '<div class="grid2">' +
+    (ff ? '<section class="panel"><header><h2>Give access · ' + esc(ff.name) + '</h2></header><div class="form">' +
+      '<label>Customer Gmail<input class="inp" id="a-email" type="email" placeholder="name@gmail.com" autocomplete="off"></label><p class="sub" id="a-err" style="margin:-6px 0 0;color:var(--red)"></p>' +
+      '<div class="row"><label>Name shown in their app<input class="inp" id="a-name" placeholder="Sharma Family"></label>' +
+      '<label>Plan<select class="inp" id="a-plan" style="width:100%">' + plans.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + ' · ' + p.days + ' days</option>'; }).join('') + '<option value="trial">Free trial · ' + ((S.data.familyfi && S.data.familyfi.trialDays) || 15) + ' days</option></select></label></div>' +
+      '<label>Payment reference (optional)<input class="inp" id="a-ref" placeholder="pay_… or UPI ref"></label>' +
+      '<button class="btn pri" id="a-save" type="button">Save access</button><p class="sub">If they already have a paid plan, the new period starts after it ends.</p></div></section>' : '') +
+    '<section class="panel"><header><h2>Renewal reminders</h2></header>' + (due.length ? '<p class="sub" style="margin:-4px 0 8px">Opens your email with a ready message. Check it, then send.</p><div class="scroll"><table><tbody>' +
+      due.map(function(c){ return '<tr><td><b>' + esc(c.name || c.email) + '</b><span class="sub">' + esc(c.appName) + ' · ' + (c.status === 'trial' ? 'trial' : esc(c.planName)) + ' ends ' + nice(c.expires) + '</span></td><td><a class="btn sm" href="' + esc(remindLink(c)) + '">Email reminder</a></td></tr>'; }).join('') + '</tbody></table></div>' :
+      '<div class="empty">No plan or trial ends in the next few days.</div>') + '</section>' +
+    (ff ? '<section class="panel"><header><h2>Razorpay</h2></header><p class="sub">The FamilyFi Server checks new payments every 15 minutes' + (S.data.familyfi && S.data.familyfi.auto ? ' (on).' : ' — <b>switched off: run setup in the FamilyFi Server project</b>.') + ' Use this if a customer paid just now.</p><button class="btn" id="check" type="button">Check payments now</button></section>' : '') +
+    (ff ? '<section class="panel"><header><h2>Offline edition · old buyers</h2></header><p class="sub" style="margin:-4px 0 8px">Discontinued 10 Nov 2026. No new copies. Resend an old buyer\'s own copy if they lost it.</p>' +
+      '<input class="inp" id="oq" placeholder="Search buyer email or licence" aria-label="Search offline buyers"><div id="olist" style="margin-top:8px">' + offRows(off, '') + '</div></section>' : '') +
+  '</div>';
+}
+function offRows(off, q){
+  q = (q || '').toLowerCase();
+  var r = off.filter(function(x){ return !q || (x.email + ' ' + x.name + ' ' + x.id).toLowerCase().indexOf(q) >= 0; }).slice(0, 8);
+  if (!off.length) return '<div class="empty">No offline buyers on record.</div>';
+  if (!r.length) return '<div class="empty">No match.</div>';
+  return '<div class="scroll"><table><tbody>' + r.map(function(x){ return '<tr><td><b>' + esc(x.name) + '</b><span class="sub">' + esc(x.email) + ' · ' + esc(x.id) + '</span></td><td><button class="btn sm" type="button" data-resend="' + esc(x.id) + '">Resend email</button></td></tr>'; }).join('') + '</tbody></table></div>';
+}
+
+function appsTab(){
+  var apps = S.data.apps || [], e = S.edit;
+  var form = function(x, isNew){
+    x = x || { kind: 'custom' };
+    return '<div class="form" id="appform"><div class="row"><label>App name<input class="inp" id="e-name" maxlength="40" value="' + esc(x.name || '') + '" placeholder="FamilyFi Pro"></label>' +
+      '<label>Type<select class="inp" id="e-kind" style="width:100%">' + ['site','familyfi','payments','custom','link'].map(function(k){ return '<option value="' + k + '"' + (x.kind === k ? ' selected' : '') + '>' + kindName(k) + '</option>'; }).join('') + '</select></label></div>' +
+      '<label>App link (https)<input class="inp" id="e-url" value="' + esc(x.url || '') + '" placeholder="https://lite.nisnil.co.in/"></label>' +
+      '<label>Server link (only for "App with its own server")<input class="inp" id="e-api" value="' + esc(x.api || '') + '" placeholder="https://script.google.com/macros/s/…/exec"></label>' +
+      '<div class="row"><label>Prices in ₹ (to match Razorpay payments)<input class="inp" id="e-amt" value="' + esc((x.amounts || []).join(', ')) + '" placeholder="49, 499"></label>' +
+      '<label>Word in Razorpay page name<input class="inp" id="e-match" value="' + esc(x.match || '') + '" placeholder="lite"></label></div>' +
+      '<label>Short note<input class="inp" id="e-note" maxlength="80" value="' + esc(x.note || '') + '" placeholder="Phone app for one person"></label>' +
+      '<p class="sub" id="e-err" style="color:var(--red);margin:0"></p>' +
+      '<div class="acts"><button class="btn pri" id="e-save" type="button">' + (isNew ? 'Add app' : 'Save changes') + '</button><button class="btn" id="e-cancel" type="button">Cancel</button></div></div>';
+  };
+  return '<section class="panel"><header><h2>Your apps</h2><button class="btn sm" id="e-add" type="button">Add a new app</button></header>' +
+    '<p class="sub" style="margin:-4px 0 10px">The list is saved on your FamilyFi Server, so it is the same on your phone and laptop. Your personal planner is not listed here.</p>' +
+    (e === 'new' ? '<div class="panel" style="background:var(--paper);margin-bottom:12px"><h3 style="font-size:17px;margin-bottom:10px">New app</h3>' + form(null, true) + '</div>' : '') +
+    '<div class="scroll"><table class="applist"><thead><tr><th>App</th><th>Type</th><th>Matches payments</th><th>Actions</th></tr></thead><tbody>' +
+    apps.map(function(x, i){
+      if (e === x.id) return '<tr><td colspan="4">' + form(x, false) + '</td></tr>';
+      return '<tr><td><b>' + esc(x.name) + '</b><span class="sub">' + esc(x.url || 'no link') + '</span></td><td>' + esc(kindName(x.kind)) + '</td>' +
+        '<td>' + ((x.amounts || []).length ? (x.amounts || []).map(function(a){ return '₹' + a; }).join(', ') : '—') + (x.match ? '<span class="sub">word: “' + esc(x.match) + '”</span>' : '') + '</td>' +
+        '<td><div class="acts"><button class="btn sm" type="button" data-edit="' + esc(x.id) + '">Edit</button>' +
+        (i > 0 ? '<button class="btn sm" type="button" data-up="' + i + '" aria-label="Move ' + esc(x.name) + ' up">↑</button>' : '') +
+        '<button class="btn sm warn' + (S.armed === 'del:' + x.id ? ' armed' : '') + '" type="button" data-del="' + esc(x.id) + '">' + (S.armed === 'del:' + x.id ? 'Confirm remove' : 'Remove') + '</button></div></td></tr>'; }).join('') +
+    '</tbody></table></div><p class="sub" style="margin:12px 0 0">Types: <b>Website</b> = link check only · <b>FamilyFi server app</b> = customers, plans and actions · <b>Payments only</b> = link check + Razorpay payments · <b>App with its own server</b> = also shows its customers (the server must answer “hubSummary”, see the setup guide) · <b>Link only</b> = a shortcut.</p>' +
+    '<div class="acts" style="margin-top:12px"><button class="btn sm' + (S.armed === 'reset' ? ' armed' : '') + '" id="e-reset" type="button">' + (S.armed === 'reset' ? 'Confirm: back to default list' : 'Back to default list') + '</button></div></section>';
+}
+function saveApps(list, msg){ return act('hubSaveApps', list).then(function(r){ S.data.apps = r.apps; S.edit = null; S.armed = null; toast(msg); return load(true); }); }
+
+/* ---------------- events ---------------- */
+function wire(){
+  var r = $('#refresh'); if (r) r.onclick = function(){ load(true); };
+  var o = $('#out'); if (o) o.onclick = signOut;
+  $$('[data-tab]').forEach(function(b){ b.onclick = function(){ S.tab = b.dataset.tab; S.armed = null; S.edit = null; render(); }; });
+  $$('[data-app]').forEach(function(b){ b.onclick = function(){ S.sel = b.dataset.app; S.armed = null; render(); }; });
+  var q = $('#q'); if (q) q.oninput = function(){ S.q = q.value; var p = q.selectionStart; render(); var n = $('#q'); n.focus(); n.setSelectionRange(p, p); };
+  var f = $('#f'); if (f) f.onchange = function(){ S.f = f.value; render(); };
+  var per = $('#per'); if (per) per.onchange = function(){ S.period = per.value; render(); };
+  $$('[data-ext]').forEach(function(s){ s.onchange = function(){ if (!s.value) return; act('adminSave', { email: s.dataset.ext, plan: s.value, ref: 'console' }).then(function(r){ S.data.familyfi.customers = r.customers; toast('Plan extended'); render(); }); }; });
+  $$('[data-rev]').forEach(function(b){ b.onclick = function(){ var k = 'rev:' + b.dataset.rev; if (S.armed !== k) { S.armed = k; render(); return; } S.armed = null;
+    act('adminRevoke', b.dataset.rev).then(function(r){ S.data.familyfi.customers = r.customers; toast('Access stopped'); render(); }); }; });
+  $$('[data-res]').forEach(function(b){ b.onclick = function(){ act('adminRestore', b.dataset.res).then(function(r){ S.data.familyfi.customers = r.customers; toast('Access restored'); render(); }); }; });
+  var c = $('#csv'); if (c) c.onclick = function(){ csv('customers', [['App','Email','Name','Plan','Status','Ends','Days left']].concat(custList().map(function(x){ return [x.appName, x.email, x.name, x.planName, x.status, x.expires, x.daysLeft]; }))); };
+  var pc = $('#pcsv'); if (pc) pc.onclick = function(){ var n = {}; S.data.apps.forEach(function(x){ n[x.id] = x.name; });
+    csv('payments', [['Date','Payment ID','App','Buyer','Email','Phone','Description','Amount','Refunded']].concat(periodList().map(function(p){ return [ist(p.at), p.id, n[p.app] || p.app, p.name, p.email, p.phone, p.desc, p.amount, p.refunded]; }))); };
+  var s = $('#a-save'); if (s) s.onclick = function(){ var e = $('#a-email').value.trim(), er = $('#a-err');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { er.textContent = 'Type a valid Gmail address.'; $('#a-email').focus(); return; } er.textContent = '';
+    act('adminSave', { email: e, name: $('#a-name').value, plan: $('#a-plan').value, ref: $('#a-ref').value }).then(function(r){ S.data.familyfi.customers = r.customers; toast('Access saved for ' + e); S.tab = 'cust'; render(); }); };
+  var ae = $('#a-email'); if (ae) ae.oninput = function(){ $('#a-err').textContent = ''; };
+  var k = $('#check'); if (k) k.onclick = function(){ act('checkNow').then(function(){ toast('Payments checked'); load(true); }); };
+  var oq = $('#oq'); if (oq) oq.oninput = function(){ $('#olist').innerHTML = offRows(S.data.offline || [], oq.value); wireResend(); };
+  wireResend();
+  var add = $('#e-add'); if (add) add.onclick = function(){ S.edit = 'new'; render(); var n = $('#e-name'); if (n) n.focus(); };
+  $$('[data-edit]').forEach(function(b){ b.onclick = function(){ S.edit = b.dataset.edit; render(); }; });
+  $$('[data-up]').forEach(function(b){ b.onclick = function(){ var i = +b.dataset.up, l = S.data.apps.slice(); var t = l[i - 1]; l[i - 1] = l[i]; l[i] = t; saveApps(l, 'Order saved'); }; });
+  $$('[data-del]').forEach(function(b){ b.onclick = function(){ var k = 'del:' + b.dataset.del; if (S.armed !== k) { S.armed = k; render(); return; }
+    saveApps(S.data.apps.filter(function(x){ return x.id !== b.dataset.del; }), 'App removed'); }; });
+  var rs = $('#e-reset'); if (rs) rs.onclick = function(){ if (S.armed !== 'reset') { S.armed = 'reset'; render(); return; }
+    act('hubResetApps').then(function(){ S.armed = null; toast('Default list restored'); load(true); }); };
+  var cn = $('#e-cancel'); if (cn) cn.onclick = function(){ S.edit = null; render(); };
+  var sv = $('#e-save'); if (sv) sv.onclick = function(){
+    var x = { name: $('#e-name').value.trim(), kind: $('#e-kind').value, url: $('#e-url').value.trim(), api: $('#e-api').value.trim(),
+      amounts: $('#e-amt').value, match: $('#e-match').value.trim(), note: $('#e-note').value.trim() };
+    var err = !x.name ? 'Give the app a name.' : [x.url, x.api].some(function(u){ return u && !/^https:\/\//i.test(u); }) ? 'Links must start with https://' : x.kind === 'custom' && !x.api ? 'An app with its own server needs the server link.' : '';
+    if (err) { $('#e-err').textContent = err; return; }
+    var list = S.data.apps.slice();
+    if (S.edit === 'new') { x.id = x.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); list.push(x); }
+    else list = list.map(function(a){ return a.id === S.edit ? Object.assign({}, a, x) : a; });
+    saveApps(list, S.edit === 'new' ? 'App added' : 'App saved');
+  };
+  $$('#appform input').forEach(function(i){ i.addEventListener('input', function(){ var e = $('#e-err'); if (e) e.textContent = ''; }); });
+}
+function wireResend(){ $$('[data-resend]').forEach(function(b){ b.onclick = function(){ act('offlineResend', b.dataset.resend).then(function(){ toast('Licence email sent again'); }); }; }); }
+function csv(name, rows){
+  var t = rows.map(function(r){ return r.map(function(v){ v = String(v == null ? '' : v); if (/^[=+\-@]/.test(v)) v = "'" + v; return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(','); }).join('\n');
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + t], { type: 'text/csv' })); a.download = 'nisnil_' + name + '_' + ist(Date.now()) + '.csv'; a.click();
+}
+
+/* ---------------- demo (?demo): invented sample data, nothing is saved ---------------- */
+var DEMO_DATA = null;
+function demoBuild(){
+  var day = 864e5, now = Date.now(), d = function(n){ return ist(now + n * day); };
+  var cust = [['Ravi Mehta','ravi.mehta.demo@gmail.com','yearly','active',180],['Priya Shah','priya.demo@gmail.com','trial','trial',2],['Amit Patel','amit.demo@gmail.com','monthly','active',3],
+    ['Kiran Desai','kiran.demo@gmail.com','yearly','active',300],['Sonal Rao','sonal.demo@gmail.com','monthly','expired',-6],['Mohan Iyer','mohan.demo@gmail.com','yearly','active',6],
+    ['Neel Joshi','neel.demo@gmail.com','trial','trial',11],['Asha Kumar','asha.demo@gmail.com','monthly','revoked',12]].map(function(x){
+      return { email: x[1], name: x[0], plan: x[2], planName: { yearly: 'Yearly', monthly: 'Monthly', trial: 'Free trial' }[x[2]], status: x[3], expires: d(x[4]), daysLeft: x[4], start: d(-30) }; });
+  var pay = [], amts = [[999,'familyfi','FamilyFi – Yearly'],[99,'familyfi','FamilyFi – Monthly'],[499,'lite','FamilyFi Lite – Yearly'],[49,'lite','FamilyFi Lite – Monthly']];
+  var names = ['Ravi Mehta','Kiran Desai','Neha Joshi','Ajay Nair','Mohan Iyer','Rita Sen','Vikram Rao','Leela Das'];
+  for (var i = 0; i < 46; i++) { var a = amts[(i * 7) % 4]; pay.push({ id: 'pay_demo' + (1000 + i), at: now - (i * 5.3 + 0.4) * day, amount: a[0], refunded: i === 9 ? a[0] : 0, status: 'captured', method: 'upi', email: names[i % 8].split(' ')[0].toLowerCase() + '.demo@gmail.com', phone: '', name: names[i % 8], desc: a[2], app: a[1] }); }
+  pay.push({ id: 'pay_demo9999', at: now - 2 * day, amount: 250, refunded: 0, status: 'captured', method: 'card', email: 'x.demo@gmail.com', phone: '', name: 'Unknown', desc: '', app: 'other' });
+  return { at: new Date().toISOString(), owner: 'Sunil Panchal', errors: {},
+    apps: [{ id: 'web', name: 'nisnil.co.in', kind: 'site', note: 'Company website · GitHub Pages', url: 'https://nisnil.co.in/', links: [{ t: 'Google Analytics', u: 'https://analytics.google.com/' }] },
+      { id: 'familyfi', name: 'FamilyFi', kind: 'familyfi', note: 'Online subscription app', url: 'https://familyfi.app.nisnil.co.in/', amounts: [99,149,999,1499,699], match: 'familyfi', links: [{ t: 'Razorpay', u: 'https://dashboard.razorpay.com/' }] },
+      { id: 'lite', name: 'FamilyFi Lite', kind: 'payments', note: 'Phone app · payments only until it gets a server', url: '', amounts: [49,499], match: 'lite', links: [] }],
+    status: { web: { state: 'up', code: 200 }, familyfi: { state: 'up', code: 200 }, lite: { state: 'nolink', code: 0 } },
+    payments: pay, familyfi: { customers: cust, trialDays: 15, auto: true, buyUrl: 'https://nisnil.co.in/familyfi/pay/',
+      pricing: { buyUrl: 'https://nisnil.co.in/familyfi/pay/', plans: [{ id: 'monthly', name: 'Monthly', days: 30 }, { id: 'yearly', name: 'Yearly', days: 365 }] } },
+    offline: [{ id: 'FFP-DEMO-0001', name: 'Old Buyer', email: 'old.buyer.demo@gmail.com', amount: 699, status: 'sent' }] };
+}
+function demoCall(fn, a){
+  if (!DEMO_DATA) DEMO_DATA = demoBuild();
+  var D = DEMO_DATA, r;
+  if (fn === 'hubOverview') r = JSON.parse(JSON.stringify(D));
+  else if (fn === 'hubSaveApps') { D.apps = a[0].map(function(x){ return Object.assign({ id: x.id || x.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), links: [] }, x, { amounts: Array.isArray(x.amounts) ? x.amounts : String(x.amounts || '').split(/[,\s]+/).map(Number).filter(Boolean) }); });
+    D.apps.forEach(function(x){ if (!D.status[x.id]) D.status[x.id] = { state: x.url ? 'up' : 'nolink', code: x.url ? 200 : 0 }; }); r = { apps: D.apps }; }
+  else if (fn === 'hubResetApps') { DEMO_DATA = null; r = { apps: demoBuild().apps }; }
+  else if (fn === 'adminSave') { var e = String(a[0].email).toLowerCase(), c = D.familyfi.customers.filter(function(x){ return x.email === e; })[0];
+    var days = a[0].plan === 'yearly' ? 365 : a[0].plan === 'trial' ? 15 : 30;
+    if (!c) { c = { email: e, name: a[0].name || '', start: ist(Date.now()) }; D.familyfi.customers.push(c); }
+    var base = c.daysLeft > 0 && c.status === 'active' ? c.daysLeft : -1; c.daysLeft = base + days; c.expires = ist(Date.now() + c.daysLeft * 864e5);
+    c.plan = a[0].plan; c.planName = { yearly: 'Yearly', monthly: 'Monthly', trial: 'Free trial' }[a[0].plan]; c.status = a[0].plan === 'trial' ? 'trial' : 'active'; r = { customers: D.familyfi.customers }; }
+  else if (fn === 'adminRevoke' || fn === 'adminRestore') { D.familyfi.customers.forEach(function(x){ if (x.email === a[0]) x.status = fn === 'adminRevoke' ? 'revoked' : (x.daysLeft < 0 ? 'expired' : x.plan === 'trial' ? 'trial' : 'active'); }); r = { customers: D.familyfi.customers }; }
+  else r = { ok: true };
+  return new Promise(function(res){ busy(true); setTimeout(function(){ busy(false); res(JSON.parse(JSON.stringify(r))); }, 250); });
+}
+function demoCustom(x){ return Promise.resolve({ customers: [{ email: 'pro.user.demo@gmail.com', name: 'Pro Demo', plan: 'Yearly', status: 'active', expires: ist(Date.now() + 40 * 864e5) }] }); }
+
+/* ---------------- start ---------------- */
+if (DEMO) { auth = { tok: 'demo', exp: Date.now() + 864e5 }; load(false); }
+else if (tokenOk()) { $('#main').innerHTML = '<div class="empty">Loading your apps…</div>'; load(false); }
+else showSignIn();
+})();
+</script>
+</body>
+</html>
